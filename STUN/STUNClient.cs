@@ -149,9 +149,14 @@ namespace STUN
         public STUNNATType NATType { get; set; }
 
         /// <summary>
-        /// Contains the public end point that queried from server.
+        /// Contains the public endpoint that queried from server.
         /// </summary>
         public IPEndPoint PublicEndPoint { get; set; }
+
+        /// <summary>
+        /// Contains client's socket local endpoiont.
+        /// </summary>
+        public IPEndPoint LocalEndPoint { get; set; }
     }
 
     /// <summary>
@@ -223,6 +228,9 @@ namespace STUN
 
             // send the request to server
             socket.SendTo(message.GetBytes(), server);
+            // we set result local endpoint after calling SendTo,
+            // because if socket is unbound, the system will bind it after SendTo call.
+            result.LocalEndPoint = socket.LocalEndPoint as IPEndPoint;
 
             // wait for response
             var responseBuffer = Receive(socket);
