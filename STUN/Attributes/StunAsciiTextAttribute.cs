@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace STUN.Attributes
 {
-    public class STUNAnsiTextAttribute : STUNAttribute
+    public class STUNAsciiTextAttribute : STUNAttribute
     {
         public string Text { get; set; }
 
         public override void Parse(STUNBinaryReader binary, int length)
         {
-            Text = Encoding.Default.GetString(binary.ReadBytes(length));
+            Text = Encoding.ASCII.GetString(binary.ReadBytes(length));
         }
 
         public override void WriteBody(STUNBinaryWriter binary)
         {
-            binary.Write(Encoding.Default.GetBytes(Text));
+            binary.Write(Encoding.ASCII.GetBytes(Text));
         }
     }
 }

@@ -12,153 +12,6 @@ using System.IO;
 
 namespace STUN
 {
-    public enum STUNNATType
-    {
-        /// <summary>
-        /// Unspecified NAT Type
-        /// </summary>
-        Unspecified,
-
-        /// <summary>
-        /// Open internet. for example virtual servers.
-        /// </summary>
-        OpenInternet,
-
-        /// <summary>
-        /// Full Cone NAT. Good to go.
-        /// </summary>
-        FullCone,
-
-        /// <summary>
-        /// Restricted Cone NAT.
-        /// It mean's client can only receive data only IP addresses that it sent a data before.
-        /// </summary>
-        Restricted,
-
-        /// <summary>
-        /// Port-Restricted Cone NAT.
-        /// Same as <see cref="Restricted"/> but port is included too.
-        /// </summary>
-        PortRestricted,
-
-        /// <summary>
-        /// Symmetric NAT.
-        /// It's means the client pick's a different port for every connection it made.
-        /// </summary>
-        Symmetric,
-
-        /// <summary>
-        /// Same as <see cref="OpenInternet"/> but only received data from addresses that it sent a data before.
-        /// </summary>
-        SymmetricUDPFirewall,
-    }
-
-    public enum STUNQueryError
-    {
-        /// <summary>
-        /// Indicates querying was successful.
-        /// </summary>
-        Success,
-
-        /// <summary>
-        /// Indicates the server responsed with error.
-        /// In this case you have check <see cref="STUNQueryResult.ServerError"/> and <see cref="STUNQueryResult.ServerErrorPhrase"/> in query result.
-        /// </summary>
-        ServerError,
-
-        /// <summary>
-        /// Indicates the server responsed a bad\wrong\.. message. This error will returned in many cases.  
-        /// </summary>
-        BadResponse,
-
-        /// <summary>
-        /// Indicates the server responsed a message that contains a different transcation ID 
-        /// </summary>
-        BadTransactionID,
-
-        /// <summary>
-        /// Indicates the server didn't response a request within a time interval
-        /// </summary>
-        Timedout,
-    }
-
-    public enum STUNQueryType
-    {
-        /// <summary>
-        /// Indicates to client to just query IP address and not NAT type
-        /// </summary>
-        PublicIP,
-
-        /// <summary>
-        /// Indicates to client to stop the querying if NAT type is strict.
-        /// If the NAT is strict the NAT type will set too <see cref="STUNNATType.Unspecified"/> 
-        /// Else the NAT type will set to one of these types
-        /// <see cref="STUNNATType.OpenInternet"/>
-        /// <see cref="STUNNATType.SymmetricUDPFirewall"/>
-        /// <see cref="STUNNATType.FullCone"/>
-        /// </summary>
-        OpenNAT,
-
-        /// <summary>
-        /// Indicates to client to find the exact NAT type.
-        /// </summary>
-        ExactNAT,
-    }
-
-    /// <summary>
-    /// STUN client querying result
-    /// </summary>
-    public class STUNQueryResult
-    {
-        /// <summary>
-        /// The query type that passed to method
-        /// </summary>
-        public STUNQueryType QueryType { get; set; }
-
-        /// <summary>
-        /// The query result error
-        /// </summary>
-        public STUNQueryError QueryError { get; set; }
-
-        /// <summary>
-        /// Contains the server error code that receive from server.
-        /// Presents if <see cref="QueryError"/> set too <see cref="STUNQueryError.ServerError"/>
-        /// </summary>
-        public STUNErrorCodes ServerError { get; set; }
-
-        /// <summary>
-        /// Contains the server error phrase that receive from server.
-        /// Presents if <see cref="QueryError"/> set to <see cref="STUNQueryError.ServerError"/>
-        /// </summary>
-        public string ServerErrorPhrase { get; set; }
-
-        /// <summary>
-        /// The socket that used to communicate with STUN server
-        /// </summary>
-        public Socket Socket { get; set; }
-
-        /// <summary>
-        /// Contains the server address
-        /// </summary>
-        public IPEndPoint ServerEndPoint { get; set; }
-
-        /// <summary>
-        /// Contains the queried NAT Type.
-        /// Presents if <see cref="QueryError"/> set to <see cref="STUNQueryError.Success"/>
-        /// </summary>
-        public STUNNATType NATType { get; set; }
-
-        /// <summary>
-        /// Contains the public endpoint that queried from server.
-        /// </summary>
-        public IPEndPoint PublicEndPoint { get; set; }
-
-        /// <summary>
-        /// Contains client's socket local endpoiont.
-        /// </summary>
-        public IPEndPoint LocalEndPoint { get; set; }
-    }
-
     /// <summary>
     /// Implements a RFC3489 STUN client.
     /// </summary>
@@ -175,17 +28,17 @@ namespace STUN
         /// Set to true if created socket should closed after the query
         /// else <see cref="STUNQueryResult.Socket"/> will leave open and can be used.
         /// </param>
-        public static async Task<STUNQueryResult> QueryAsync(IPEndPoint server, STUNQueryType queryType, bool closeSocket)
+        public static Task<STUNQueryResult> QueryAsync(IPEndPoint server, STUNQueryType queryType, bool closeSocket)
         {
-            return await Task.Run(() => Query(server, queryType, closeSocket));
+            return Task.Run(() => Query(server, queryType, closeSocket));
         }
 
         /// <param name="socket">A UDP <see cref="Socket"/> that will use for query. You can also use <see cref="UdpClient.Client"/></param>
         /// <param name="server">Server address</param>
         /// <param name="queryType">Query type</param>
-        public static async Task<STUNQueryResult> QueryAsync(Socket socket, IPEndPoint server, STUNQueryType queryType)
+        public static Task<STUNQueryResult> QueryAsync(Socket socket, IPEndPoint server, STUNQueryType queryType)
         {
-            return await Task.Run(() => Query(socket, server, queryType));
+            return Task.Run(() => Query(socket, server, queryType));
         }
 
         /// <param name="server">Server address</param>
@@ -204,7 +57,7 @@ namespace STUN
 
             if (closeSocket)
             {
-                socket.Close();
+                socket.Dispose();
                 result.Socket = null;
             }
 
@@ -575,9 +428,58 @@ namespace STUN
             return buffer.Take(bytesRead).ToArray();
         }
 
-        static bool ByteArrayCompare(byte[] b1, byte[] a2)
+        public static bool TryParseHostAndPort(string hostAndPort, out IPEndPoint endPoint)
         {
-            return b1.SequenceEqual(a2);
+            if (string.IsNullOrWhiteSpace(hostAndPort))
+            {
+                endPoint = null;
+                return false;
+            }
+
+            var split = hostAndPort.Split(':');
+
+            if (split.Length != 2)
+            {
+                endPoint = null;
+                return false;
+            }
+
+            if (!ushort.TryParse(split[1], out ushort port))
+            {
+                endPoint = null;
+                return false;
+            }
+
+            if (!IPAddress.TryParse(split[0], out IPAddress address))
+            {
+                try
+                {
+#if NETSTANDARD1_3
+                    address = Dns.GetHostEntryAsync(split[0]).GetAwaiter().GetResult().AddressList.First();
+#else
+                    address = Dns.GetHostEntry(split[0]).AddressList.First();
+#endif
+                }
+                catch
+                {
+                    endPoint = null;
+                    return false;
+                }
+            }
+
+            endPoint = new IPEndPoint(address, port);
+            return true;
+        }
+
+        static bool ByteArrayCompare(byte[] b1, byte[] b2)
+        {
+            if (b1 == b2)
+                return true;
+
+            if (b1.Length != b2.Length)
+                return false;
+
+            return b1.SequenceEqual(b2);
         }
     }
 }

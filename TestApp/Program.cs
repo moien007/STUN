@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net;
-using System.Net.Sockets;
 using STUN;
 
 namespace TestApp
@@ -13,24 +8,17 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
-            const string HOSTNAME = @"stun2.l.google.com";
-            const int HOSTPORT = 19302;
+            if (!STUNClient.TryParseHostAndPort("stun3.l.google.com:19302", out IPEndPoint stunEndPoint))
+                throw new Exception("Failed to resolve STUN server address");
 
-            var serverIp = Dns.GetHostEntry(HOSTNAME).AddressList.First();
-            var serverEndPoint = new IPEndPoint(serverIp, HOSTPORT);
+            var queryResult = STUNClient.Query(stunEndPoint, STUNQueryType.ExactNAT, false);
+            
+            if (queryResult.QueryError != STUNQueryError.Success)
+                throw new Exception("Query Error: " + queryResult.QueryError.ToString());
 
-            Console.WriteLine("Querying public IP address...");
-            var queryResult = STUNClient.Query(serverEndPoint, STUNQueryType.ExactNAT, true);
-
-            if (queryResult.QueryError == STUNQueryError.Success)
-            {
-                Console.WriteLine("Query success, Public IP: {0}, NAT Type: {1}", queryResult.PublicEndPoint, queryResult.NATType);
-            }
-            else
-            {
-                Console.WriteLine("Query error: {0}", queryResult.QueryError);
-            }
-
+            Console.WriteLine("PublicEndPoint: {0}", queryResult.PublicEndPoint);
+            Console.WriteLine("LocalEndPoint: {0}", queryResult.LocalEndPoint);
+            Console.WriteLine("NAT Type: {0}", queryResult.NATType);
             Console.ReadKey();
         }
     }

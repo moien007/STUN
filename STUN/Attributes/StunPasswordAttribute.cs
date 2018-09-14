@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace STUN.Attributes
 {
-    public class STUNPasswordAttribute : STUNAnsiTextAttribute
+    public class STUNPasswordAttribute : STUNAsciiTextAttribute
     {
         public override string ToString()
         {
