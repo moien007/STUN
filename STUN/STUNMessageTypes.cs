@@ -13,6 +13,6 @@ namespace STUN
         BindingErrorResponse = 0x0111,
         SharedSecretRequest = 0x0002,
         SharedSecretResponse = 0x0102,
-        SharedSecretErrorResponse = 0x0112,
+        SharedSecretErrorResponse = 0x0112
     }
 }

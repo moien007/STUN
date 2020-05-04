@@ -113,6 +113,20 @@ namespace STUN
                 return memory.ToArray();
             }
         }
+
+        public static byte[] GenerateTransactionIDNewStun()
+        {
+            Guid guid = Guid.NewGuid();
+            var guidArray = guid.ToByteArray();
+            // Add magic_cookie as a part of transaction id
+            byte[] guidByte = new byte[16];
+            guidByte[0] = 0x21;
+            guidByte[1] = 0x12;
+            guidByte[2] = 0xA4;
+            guidByte[3] = 0x42;
+            Buffer.BlockCopy(guidArray, 0,guidByte, 4, 12);
+            return guidByte;
+        }
         
         public static byte[] GenerateTransactionID()
         {

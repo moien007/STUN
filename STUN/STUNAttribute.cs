@@ -28,6 +28,9 @@ namespace STUN
             AddAttribute<STUNErrorCodeAttribute>(9);
             //AddAttribute<>(10);
             AddAttribute<STUNReflectedFromAttribute>(11);
+            AddAttribute<STUNXorMappedAddressAttribute>(0x0020);
+            AddAttribute<STUNResponseOriginAttribute>(0x802B);
+            AddAttribute<STUNOtherAddressAttribute>(0x802C);
         }
 
         public abstract void Parse(STUNBinaryReader binary, int length);
