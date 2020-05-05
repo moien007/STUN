@@ -58,23 +58,36 @@ namespace STUN
 
             int attrType;
             int attrLength;
+            int paddingLength;
 
             while ((binary.BaseStream.Position - 20) < messageLength)
             {
                 attrType = binary.ReadUInt16();
                 attrLength = binary.ReadUInt16();
+                
+                if (attrLength % 4 == 0)
+                {
+                    paddingLength = 0;
+                }
+                else
+                {
+                    paddingLength = 4 - attrLength % 4;
+                }
 
                 var type = STUNAttribute.GetAttribute(attrType);
 
-                if (type == null)
+                if (type != null)
+                {
+                    var attr = Activator.CreateInstance(type) as STUNAttribute;
+                    attr.Parse(binary, attrLength);
+                    Attributes.Add(attr);
+                }
+                else
                 {
                     binary.BaseStream.Position += attrLength;
-                    continue;
                 }
 
-                var attr = Activator.CreateInstance(type) as STUNAttribute;
-                attr.Parse(binary, attrLength);
-                Attributes.Add(attr);
+                binary.BaseStream.Position += paddingLength;
             }
         }
 
