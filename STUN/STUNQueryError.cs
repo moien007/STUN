@@ -27,5 +27,9 @@
         /// Indicates the server didn't response a request within a time interval
         /// </summary>
         Timedout,
+        /// <summary>
+        /// Indicates the server did not support nat detection
+        /// </summary>
+        NotSupported
     }
 }

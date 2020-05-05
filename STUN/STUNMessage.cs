@@ -58,23 +58,36 @@ namespace STUN
 
             int attrType;
             int attrLength;
+            int paddingLength;
 
             while ((binary.BaseStream.Position - 20) < messageLength)
             {
                 attrType = binary.ReadUInt16();
                 attrLength = binary.ReadUInt16();
+                
+                if (attrLength % 4 == 0)
+                {
+                    paddingLength = 0;
+                }
+                else
+                {
+                    paddingLength = 4 - attrLength % 4;
+                }
 
                 var type = STUNAttribute.GetAttribute(attrType);
 
-                if (type == null)
+                if (type != null)
+                {
+                    var attr = Activator.CreateInstance(type) as STUNAttribute;
+                    attr.Parse(binary, attrLength);
+                    Attributes.Add(attr);
+                }
+                else
                 {
                     binary.BaseStream.Position += attrLength;
-                    continue;
                 }
 
-                var attr = Activator.CreateInstance(type) as STUNAttribute;
-                attr.Parse(binary, attrLength);
-                Attributes.Add(attr);
+                binary.BaseStream.Position += paddingLength;
             }
         }
 
@@ -112,6 +125,20 @@ namespace STUN
                 Write(memory);
                 return memory.ToArray();
             }
+        }
+
+        public static byte[] GenerateTransactionIDNewStun()
+        {
+            Guid guid = Guid.NewGuid();
+            var guidArray = guid.ToByteArray();
+            // Add magic_cookie as a part of transaction id
+            byte[] guidByte = new byte[16];
+            guidByte[0] = 0x21;
+            guidByte[1] = 0x12;
+            guidByte[2] = 0xA4;
+            guidByte[3] = 0x42;
+            Buffer.BlockCopy(guidArray, 0,guidByte, 4, 12);
+            return guidByte;
         }
         
         public static byte[] GenerateTransactionID()
