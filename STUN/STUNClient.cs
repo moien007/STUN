@@ -49,10 +49,11 @@ namespace STUN
         /// else <see cref="STUNQueryResult.Socket"/> will leave open and can be used.
         /// </param>
         public static STUNQueryResult Query(IPEndPoint server, STUNQueryType queryType, bool closeSocket,
-            NATTypeDetectionRFC natTypeDetectionRfc = NATTypeDetectionRFC.Rfc3489)
+            NATTypeDetectionRFC natTypeDetectionRfc = NATTypeDetectionRFC.Rfc3489,
+            String localAddress = "0.0.0.0")
         {
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            IPEndPoint bindEndPoint = new IPEndPoint(IPAddress.Any, 0);
+            IPEndPoint bindEndPoint = new IPEndPoint(IPAddress.Parse(localAddress), 0);
             socket.Bind(bindEndPoint);
 
             var result = Query(socket, server, queryType, natTypeDetectionRfc);

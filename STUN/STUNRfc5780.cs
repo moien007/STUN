@@ -122,6 +122,7 @@ namespace STUN
             // Make test 2 - bind different ip address but primary port
             message = new STUNMessage(STUNMessageTypes.BindingRequest, transID); // create a bind request
             IPEndPoint secondaryServer = new IPEndPoint(otherAddressAttribute.EndPoint.Address, server.Port);
+
             socket.SendTo(message.GetBytes(), secondaryServer);
             responseBuffer = STUNUtils.Receive(socket, ReceiveTimeout);
 
