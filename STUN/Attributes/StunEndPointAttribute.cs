@@ -12,7 +12,7 @@ namespace STUN.Attributes
     {
         public IPEndPoint EndPoint { get; set; }
 
-        public override void Parse(STUNBinaryReader binary, int length)
+        public override void Parse(STUNMessage msg, STUNBinaryReader binary, int length)
         {
             binary.BaseStream.Position++;
             var ipFamily = binary.ReadByte();

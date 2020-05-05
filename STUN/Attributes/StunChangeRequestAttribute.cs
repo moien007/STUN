@@ -24,7 +24,7 @@ namespace STUN.Attributes
             ChangePort = port;
         }
 
-        public override void Parse(STUNBinaryReader binary, int length)
+        public override void Parse(STUNMessage msg, STUNBinaryReader binary, int length)
         {
             binary.BaseStream.Position += 3;
             var b = binary.ReadByte();

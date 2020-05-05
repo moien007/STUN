@@ -79,7 +79,7 @@ namespace STUN
                 if (type != null)
                 {
                     var attr = Activator.CreateInstance(type) as STUNAttribute;
-                    attr.Parse(binary, attrLength);
+                    attr.Parse(this, binary, attrLength);
                     Attributes.Add(attr);
                 }
                 else

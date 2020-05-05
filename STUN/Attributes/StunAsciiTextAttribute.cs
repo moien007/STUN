@@ -10,7 +10,7 @@ namespace STUN.Attributes
     {
         public string Text { get; set; }
 
-        public override void Parse(STUNBinaryReader binary, int length)
+        public override void Parse(STUNMessage msg, STUNBinaryReader binary, int length)
         {
             Text = Encoding.ASCII.GetString(binary.ReadBytes(length));
         }
