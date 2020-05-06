@@ -45,8 +45,9 @@ namespace STUN.Attributes
             }
             else if (ipFamily == 2)
             {
-                // IPv4 address is computed by taking the mapped IP
-                // address in host byte order and XOR'ing it with the magic cookie.
+                // IPv6 address is computed by taking the mapped IP address
+                // in host byte order, XOR'ing it with the concatenation of the magic
+                // cookie and the 96 - bit transaction ID.
                 byte[] a = binary.ReadBytes(16);
                 for (int i = 0; i < 16; ++i)
                 {
