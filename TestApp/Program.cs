@@ -9,7 +9,10 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
-            if (!STUNUtils.TryParseHostAndPort("stun.schlund.de:3478", out IPEndPoint stunEndPoint))
+            // args[0] - STUN server IP and port, e.g. "stun.schlund.de:3478"
+            String stunAddresAndPort = args[0];
+
+            if (!STUNUtils.TryParseHostAndPort(stunAddresAndPort, out IPEndPoint stunEndPoint))
                 throw new Exception("Failed to resolve STUN server address");
 
             STUNClient.ReceiveTimeout = 500;

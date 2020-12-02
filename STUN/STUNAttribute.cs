@@ -33,7 +33,7 @@ namespace STUN
             AddAttribute<STUNOtherAddressAttribute>(0x802C);
         }
 
-        public abstract void Parse(STUNBinaryReader binary, int length);
+        public abstract void Parse(STUNMessage msg, STUNBinaryReader binary, int length);
 
         public virtual void Write(STUNBinaryWriter binary)
         {

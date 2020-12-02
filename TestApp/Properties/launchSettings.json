@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TestApp": {
+      "commandName": "Project",
+      "commandLineArgs": "172.16.0.3:3478 10.0.0.2"
+    }
+  }
+}

@@ -8,7 +8,7 @@ namespace STUN.Attributes
 {
     public class STUNMessageIntegrityAttribute : STUNAttribute
     {
-        public override void Parse(STUNBinaryReader binary, int length)
+        public override void Parse(STUNMessage msg, STUNBinaryReader binary, int length)
         {
             throw new NotImplementedException();
         }

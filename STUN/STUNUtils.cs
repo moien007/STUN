@@ -2,7 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace STUN.Attributes
+namespace STUN
 {
     public class STUNUtils
     {

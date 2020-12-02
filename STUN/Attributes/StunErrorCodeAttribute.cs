@@ -11,7 +11,7 @@ namespace STUN.Attributes
         public STUNErrorCodes Error { get; set; }
         public string Phrase { get; set; }
 
-        public override void Parse(STUNBinaryReader binary, int length)
+        public override void Parse(STUNMessage msg, STUNBinaryReader binary, int length)
         {
             throw new NotImplementedException();
         }

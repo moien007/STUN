@@ -20,7 +20,7 @@ namespace STUN
         /// <summary>
         /// Period of time in miliseconds to wait for server response.
         /// </summary>
-        public static int ReceiveTimeout = 5000;
+        public static int ReceiveTimeout = 500;
 
         /// <param name="server">Server address</param>
         /// <param name="queryType">Query type</param>
