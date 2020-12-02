@@ -20,7 +20,7 @@ namespace STUN
         /// <summary>
         /// Period of time in miliseconds to wait for server response.
         /// </summary>
-        public static int ReceiveTimeout = 5000;
+        public static int ReceiveTimeout = 500;
 
         /// <param name="server">Server address</param>
         /// <param name="queryType">Query type</param>
@@ -49,11 +49,10 @@ namespace STUN
         /// else <see cref="STUNQueryResult.Socket"/> will leave open and can be used.
         /// </param>
         public static STUNQueryResult Query(IPEndPoint server, STUNQueryType queryType, bool closeSocket,
-            NATTypeDetectionRFC natTypeDetectionRfc = NATTypeDetectionRFC.Rfc3489,
-            String localAddress = "0.0.0.0")
+            NATTypeDetectionRFC natTypeDetectionRfc = NATTypeDetectionRFC.Rfc3489)
         {
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            IPEndPoint bindEndPoint = new IPEndPoint(IPAddress.Parse(localAddress), 0);
+            IPEndPoint bindEndPoint = new IPEndPoint(IPAddress.Any, 0);
             socket.Bind(bindEndPoint);
 
             var result = Query(socket, server, queryType, natTypeDetectionRfc);

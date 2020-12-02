@@ -28,7 +28,7 @@ namespace STUN.Attributes
             // didn't receive anything
             if (responseBuffer == null)
             {
-                result.QueryError = STUNQueryError.Timedout;
+                result.QueryError = STUNQueryError.Timeout;
                 return result;
             }
 
@@ -240,7 +240,7 @@ namespace STUN.Attributes
 
             if (responseBuffer == null)
             {
-                result.QueryError = STUNQueryError.Timedout;
+                result.QueryError = STUNQueryError.Timeout;
                 return result;
             }
 
@@ -312,7 +312,7 @@ namespace STUN.Attributes
 
             if (!message.TryParse(responseBuffer))
             {
-                result.QueryError = STUNQueryError.Timedout;
+                result.QueryError = STUNQueryError.Timeout;
                 return result;
             }
 

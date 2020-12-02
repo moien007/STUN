@@ -46,6 +46,8 @@ namespace STUN
         /// </summary>
         public STUNNATType NATType { get; set; }
 
+        public STUNNatFilteringBehavior FilteringBehavior { get; set; }
+
         /// <summary>
         /// Contains the public endpoint that queried from server.
         /// </summary>
